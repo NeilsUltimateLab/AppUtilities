@@ -1,3 +1,3 @@
-struct AppConfiguration {
+struct AppUtilities {
     var text = "Hello, World!"
 }
