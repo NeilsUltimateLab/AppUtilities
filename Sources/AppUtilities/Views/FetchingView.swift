@@ -7,8 +7,8 @@
 
 import UIKit
 
-extension FetchingView {
-    public enum State {
+public extension FetchingView {
+    enum State {
         case fetching
         case fetched
         case error(AppErrorProvider)
@@ -33,7 +33,7 @@ extension FetchingView {
     }
 }
 
-class FetchingView {
+public class FetchingView {
     
     var listView: UIView
     var parentView: UIView
