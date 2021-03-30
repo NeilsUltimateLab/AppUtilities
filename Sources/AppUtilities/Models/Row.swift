@@ -7,13 +7,22 @@
 
 import UIKit
 
-public struct Row<Value, Cell: ReusableView> {
-    var value: Value
-    var cellType: Cell.Type
+public struct Row<Value, Cell: ReusableView>: Hashable where Value: Hashable {
+    public var value: Value
+    public var cellType: Cell.Type
     
     public init(_ value: Value) {
         self.value = value
         self.cellType = Cell.self
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(value)
+        hasher.combine(cellType.identifier)
+    }
+    
+    public static func ==(lhs: Row, rhs: Row) -> Bool {
+        lhs.value == rhs.value && lhs.cellType.identifier == rhs.cellType.identifier
     }
 }
 

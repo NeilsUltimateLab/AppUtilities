@@ -7,14 +7,14 @@
 
 import UIKit
 
-public struct FieldValue {
-    var title: String
-    var placeholder: String?
-    var value: String?
-    var keyboardType: UIKeyboardType = .default
-    var isSelectable: Bool = false
-    var formatter: NumberFormatter? = nil
-    var maxCharacters: Int?
+public struct FieldValue: Hashable {
+    public var title: String
+    public var placeholder: String?
+    public var value: String?
+    public var keyboardType: UIKeyboardType = .default
+    public var isSelectable: Bool = false
+    public var formatter: NumberFormatter? = nil
+    public var maxCharacters: Int?
 }
 
 public extension FieldValue {
