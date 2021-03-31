@@ -102,7 +102,7 @@ public extension UICollectionView {
                                    for: indexPath) as? T
     }
     
-    func dequeueReusableSupplementaryView<T: UICollectionViewCell>(_ : T.Type, ofKind kind: String, for indexPath: IndexPath) -> T? {
+    func dequeueReusableSupplementaryView<T: UICollectionReusableView>(_ : T.Type, ofKind kind: String, for indexPath: IndexPath) -> T? {
         return dequeueReusableSupplementaryView(ofKind: kind,
                                                 withReuseIdentifier: T.identifier,
                                                 for: indexPath) as? T
