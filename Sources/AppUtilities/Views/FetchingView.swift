@@ -13,7 +13,7 @@ public extension FetchingView {
         case fetched
         case error(AppErrorProvider)
         
-        var isFetching: Bool {
+        public var isFetching: Bool {
             switch self {
             case .fetching:
                 return true
@@ -22,7 +22,7 @@ public extension FetchingView {
             }
         }
         
-        var hasError: Bool {
+        public var hasError: Bool {
             switch self {
             case .error:
                 return true
@@ -38,11 +38,12 @@ public class FetchingView {
     var listView: UIView
     var parentView: UIView
     
-    var centerYOffset: CGFloat = 0 {
+    public var centerYOffset: CGFloat = 0 {
         didSet {
             centerYConstraint?.constant = centerYOffset
         }
     }
+    
     private var centerYConstraint: NSLayoutConstraint!
     
     // MARK: - Initialiser -
@@ -280,7 +281,7 @@ public class FetchingView {
     }
     
     // MARK: - LoadMoreView -
-    func loadMoreView() -> UIView {
+    public func loadMoreView() -> UIView {
         let view = UIView(frame: CGRect(x: 0, y: 0, width: self.listView.frame.width, height: 56))
         view.addSubview(loadMoreIndicatorView)
         loadMoreIndicatorView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
@@ -289,7 +290,7 @@ public class FetchingView {
         return view
     }
     
-    func stopLoadMore() {
+    public func stopLoadMore() {
         loadMoreIndicatorView.stopAnimating()
         loadMoreIndicatorView.removeFromSuperview()
     }
