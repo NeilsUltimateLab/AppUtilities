@@ -172,11 +172,11 @@ public extension UIApplication {
 }
 
 public extension UIImageView {
-    func fetchImageAsset(_ asset: PHAsset?, targetSize: CGSize, contentMode: PHImageContentMode = .aspectFit, options: PHImageRequestOptions? = nil, completion: ((Bool)->Void)?) {
+    func fetchImageAsset(_ asset: PHAsset?, targetSize: CGSize, contentMode: PHImageContentMode = .aspectFit, options: PHImageRequestOptions? = nil, completion: ((Bool)->Void)?) -> PHImageRequestID? {
         
         guard let asset = asset else {
             completion?(false)
-            return
+            return nil
         }
         
         let resultHandler: (UIImage?, [AnyHashable: Any]?)->Void = { image, info in
@@ -184,12 +184,17 @@ public extension UIImageView {
             completion?(true)
         }
         
-        PHImageManager.default().requestImage(
+        return PHImageManager.default().requestImage(
             for: asset,
             targetSize: targetSize,
             contentMode: contentMode,
             options: options,
             resultHandler: resultHandler
         )
+    }
+    
+    func cancelImageRequest(_ id: PHImageRequestID?) {
+        guard let id = id else { return }
+        PHImageManager.default().cancelImageRequest(id)
     }
 }
