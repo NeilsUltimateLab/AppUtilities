@@ -7,15 +7,15 @@
 
 import UIKit
 
-public class IndicatorButton: UIButton {
+open class IndicatorButton: UIButton {
     
-    public var progressTintColor: UIColor = .blue {
+    open var progressTintColor: UIColor = .blue {
         didSet {
             self.progressView.progressTintColor = progressTintColor
         }
     }
     
-    public var loadingText: String = ""
+    open var loadingText: String = ""
     
     private var indicatingStackView: UIStackView = {
         let stackView = UIStackView()
@@ -98,7 +98,7 @@ public class IndicatorButton: UIButton {
         self.previousText = title
     }
     
-    func startAnimating() {
+    open func startAnimating() {
         self.previousImage = self.imageView?.image
         self.imageInset = self.imageEdgeInsets
         self.imageEdgeInsets = .zero
@@ -114,7 +114,7 @@ public class IndicatorButton: UIButton {
         self.isEnabled = false
     }
     
-    func stopAnimating() {
+    open func stopAnimating() {
         self.isEnabled = true
         self.imageEdgeInsets = imageInset
         self.indicatorView.stopAnimating()
@@ -123,7 +123,7 @@ public class IndicatorButton: UIButton {
         self.setTitle(previousText, for: .normal)
     }
     
-    func updateProgress(progress: Double) {
+    open func updateProgress(progress: Double) {
         self.loadingLabel.text = ""
         
         if progress > 0 {
