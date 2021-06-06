@@ -59,12 +59,12 @@ open class IndicatorButton: UIButton {
     private var previousImage: UIImage?
     private var imageInset: UIEdgeInsets = .zero
     
-    override init(frame: CGRect) {
+    public override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
     }
     
-    required init?(coder aDecoder: NSCoder) {
+    public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         setup()
     }
