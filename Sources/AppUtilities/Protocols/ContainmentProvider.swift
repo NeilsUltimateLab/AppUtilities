@@ -24,6 +24,17 @@ public extension ContainmentProvider where Self: UIViewController {
         viewController.didMove(toParent: self)
     }
     
+    func addChild(_ viewController: UIViewController, toSafeAreaOf containerView: UIView) {
+        self.addChild(viewController)
+        viewController.view.translatesAutoresizingMaskIntoConstraints = false
+        containerView.addSubview(viewController.view)
+        viewController.view.leftAnchor.constraint(equalTo: containerView.safeAreaLayoutGuide.leftAnchor).isActive = true
+        viewController.view.rightAnchor.constraint(equalTo: containerView.safeAreaLayoutGuide.rightAnchor).isActive = true
+        viewController.view.bottomAnchor.constraint(equalTo: containerView.safeAreaLayoutGuide.bottomAnchor).isActive = true
+        viewController.view.topAnchor.constraint(equalTo: containerView.safeAreaLayoutGuide.topAnchor).isActive = true
+        viewController.didMove(toParent: self)
+    }
+    
     func removeChild(_ viewController: UIViewController?) {
         viewController?.willMove(toParent: nil)
         viewController?.view.removeFromSuperview()
