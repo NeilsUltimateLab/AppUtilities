@@ -9,7 +9,7 @@ import UIKit
 
 open class AppTextView: UITextView {
     
-    var onTextChange: ((String?)->Void)?
+    open var onTextChange: ((String?)->Void)?
     
     override init(frame: CGRect, textContainer: NSTextContainer?) {
         super.init(frame: frame, textContainer: textContainer)
