@@ -28,29 +28,14 @@ open class PopPresentationController: UIPresentationController {
     }
     
     private lazy var chromeView: UIVisualEffectView = {
-        let effect = UIBlurEffect(style: .light)
-        let view = UIVisualEffectView(effect: effect)
+        let view = UIVisualEffectView(frame: .zero)
         view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    
-    private lazy var shadowView: UIView = {
-        let view = UIView(frame: .zero)
-        view.backgroundColor = .systemBackground
-        view.layer.shadowColor = UIColor.darkGray.withAlphaComponent(0.5).cgColor
-        view.layer.shadowOpacity = 0
-        view.layer.shadowRadius = 8
-        view.layer.shadowOffset = .zero
-        view.layer.masksToBounds = false
-        view.layer.cornerRadius = 12
-        view.alpha = 0
         return view
     }()
     
     private func setupChromeView() {
         guard let containerView = self.containerView else { return }
         containerView.addSubview(chromeView)
-        containerView.addSubview(shadowView)
         
         chromeView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
         chromeView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
@@ -63,7 +48,7 @@ open class PopPresentationController: UIPresentationController {
             self?.keyboardHeight = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect)?.height ?? 0
         })
         
-        self.keyboardDidDisappearToken = NotificationCenter.default.addObserver(forName: UIResponder.keyboardDidHideNotification, object: nil, queue: .main, using: { [weak self] (notification) in
+        self.keyboardDidDisappearToken = NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillHideNotification, object: nil, queue: .main, using: { [weak self] (notification) in
             self?.keyboardHeight = 0
         })
     }
@@ -71,30 +56,27 @@ open class PopPresentationController: UIPresentationController {
     open override func presentationTransitionWillBegin() {
         setupChromeView()
         guard let coordinator = presentedViewController.transitionCoordinator else {
-            chromeView.alpha = 1
-            shadowView.alpha = 1
-            shadowView.layer.shadowOpacity = 0
+            chromeView.effect = UIBlurEffect(style: .light)
+            self.presentingViewController.view.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
             return
         }
         
         coordinator.animate { (context) in
-            self.chromeView.alpha = 1
-            self.shadowView.alpha = 1
-            self.shadowView.layer.shadowOpacity = 1
+            self.chromeView.effect = UIBlurEffect(style: .light)
+            self.presentingViewController.view.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
         }
     }
     
     open override func dismissalTransitionWillBegin() {
         guard let coordinator = presentedViewController.transitionCoordinator else {
-            self.chromeView.alpha = 0
-            self.shadowView.alpha = 0
-            self.shadowView.layer.shadowOpacity = 0
+            chromeView.effect = nil
+            self.presentingViewController.view.transform = .identity
+            
             return
         }
         coordinator.animate { (context) in
-            self.chromeView.alpha = 0
-            self.shadowView.alpha = 0
-            self.shadowView.layer.shadowOpacity = 0
+            self.chromeView.effect = nil
+            self.presentingViewController.view.transform = .identity
         }
     }
     
@@ -110,7 +92,6 @@ open class PopPresentationController: UIPresentationController {
     open override func containerViewDidLayoutSubviews() {
         super.containerViewDidLayoutSubviews()
         self.presentedView?.frame = frameOfPresentedViewInContainerView
-        self.shadowView.frame = frameOfPresentedViewInContainerView
     }
     
     open override var frameOfPresentedViewInContainerView: CGRect {
@@ -158,7 +139,6 @@ open class PopPresentationController: UIPresentationController {
 
     open override func preferredContentSizeDidChange(forChildContentContainer container: UIContentContainer) {
         self.presentedView?.frame = frameOfPresentedViewInContainerView
-        self.shadowView.frame = frameOfPresentedViewInContainerView
     }
     
 }

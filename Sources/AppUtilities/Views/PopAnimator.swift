@@ -21,6 +21,19 @@ public class PopAnimator: NSObject, UIViewControllerAnimatedTransitioning {
     public var height: CGFloat?
     private let impactFeedbackGenerator = UIImpactFeedbackGenerator()
     
+    private lazy var shadowView: UIView = {
+        let view = UIView(frame: .zero)
+        view.backgroundColor = .systemBackground
+        view.layer.shadowColor = UIColor.darkGray.withAlphaComponent(1).cgColor
+        view.layer.shadowOpacity = 0
+        view.layer.shadowRadius = 24
+        view.layer.shadowOffset = .zero
+        view.layer.masksToBounds = false
+        view.layer.cornerRadius = 12
+        view.alpha = 0
+        return view
+    }()
+    
     public override init() {
         super.init()
         impactFeedbackGenerator.prepare()
@@ -33,53 +46,50 @@ public class PopAnimator: NSObject, UIViewControllerAnimatedTransitioning {
     public func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
         sourceView.alpha = 1
         guard
-            let toVC = self.isPresenting ? transitionContext.viewController(forKey: .to) : transitionContext.viewController(forKey: .from),
+            let toVC = self.isPresenting ? transitionContext.view(forKey: .to) : transitionContext.view(forKey: .from),
+            let toView = self.isPresenting ? transitionContext.viewController(forKey: .to) : transitionContext.viewController(forKey: .from),
             let originalSourceView = sourceView,
             let sourceView = sourceView.snapshotView(afterScreenUpdates: true),
             let sourceRect = sourceRect
         else { return }
         
         let containerView = transitionContext.containerView
-        self.destinationRect = transitionContext.finalFrame(for: toVC)
+        self.destinationRect = transitionContext.finalFrame(for: toView)
                 
         let isPresenting = self.isPresenting
 
+        containerView.addSubview(toVC)
         containerView.addSubview(sourceView)
+        containerView.addSubview(shadowView)
         
         originalSourceView.alpha = 0
         sourceView.frame = sourceRect
-        containerView.addSubview(toVC.view)
-        
-        let sourceViewCenter = sourceView.center
-        
-        toVC.view.frame = destinationRect
-        toVC.view.center = isPresenting ? CGPoint(x: sourceRect.midX, y: sourceRect.midY) : containerView.center
-        toVC.view.layer.cornerRadius = 12
-        toVC.view.layer.masksToBounds = true
-        toVC.view.transform = isPresenting ? self.transform(fromRect: sourceRect, toRect: destinationRect) : .identity
-        toVC.view.alpha = isPresenting ? 0 : 1
+                
+        //toVC.frame = sourceRect
+        toVC.layer.cornerRadius = 12
+        toVC.layer.masksToBounds = true
+        toVC.alpha = isPresenting ? 0 : 1
+        shadowView.frame = toVC.frame
         
         if !isPresenting {
-            sourceView.alpha = 0
-            sourceView.center = containerView.center
-            sourceView.transform = self.squareTransform(fromRect: toVC.view.frame, toRect: sourceRect)
             containerView.bringSubviewToFront(sourceView)
+            sourceView.alpha = 0
+            sourceView.frame = destinationRect
+            //toVC.frame = sourceView.frame
         }
         impactFeedbackGenerator.impactOccurred()
                 
-        UIView.animate(withDuration: duration, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseInOut) {
-            toVC.view.alpha = isPresenting ? 1 : 0
+        UIView.animate(withDuration: duration, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.8, options: .curveEaseInOut) {
+            self.shadowView.layer.shadowOpacity = isPresenting ? 1 : 0
+            
+            sourceView.frame = !isPresenting ? self.sourceRect : self.destinationRect
+            toVC.alpha = isPresenting ? 1 : 0
             sourceView.alpha = isPresenting ? 0 : 1
-            
-            toVC.view.transform = isPresenting ? .identity : self.transform(fromRect: sourceRect, toRect: self.destinationRect)
-            
-            toVC.view.center = isPresenting ? containerView.center : sourceViewCenter
-            sourceView.center = isPresenting ? containerView.center : sourceViewCenter
-            sourceView.transform = isPresenting ? self.squareTransform(fromRect: self.destinationRect, toRect: sourceRect) : .identity
             
         } completion: { (success) in
             if !self.isPresenting {
                 originalSourceView.alpha = 1
+                self.sourceView.alpha = 1
                 self.impactFeedbackGenerator.impactOccurred()
             }
             transitionContext.completeTransition(success)
@@ -90,11 +100,6 @@ public class PopAnimator: NSObject, UIViewControllerAnimatedTransitioning {
         let scaleX = fromRect.width / toRect.width
         let scaleY = fromRect.height / toRect.height
         return CGAffineTransform(scaleX: scaleX, y: scaleY)
-    }
-    
-    private func squareTransform(fromRect: CGRect, toRect: CGRect) -> CGAffineTransform {
-        let scaleX = fromRect.width / toRect.width
-        return CGAffineTransform(scaleX: scaleX, y: scaleX)
     }
     
     deinit {
