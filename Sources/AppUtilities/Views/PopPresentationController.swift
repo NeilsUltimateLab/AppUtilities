@@ -9,6 +9,7 @@ import UIKit
 
 open class PopPresentationController: UIPresentationController {
     
+    public var shouldBlur: Bool = true
     private var keyboardWillAppearToken: Any?
     private var keyboardDidDisappearToken: Any?
     private var keyboardHeight: CGFloat = 0 {
@@ -56,27 +57,43 @@ open class PopPresentationController: UIPresentationController {
     open override func presentationTransitionWillBegin() {
         setupChromeView()
         guard let coordinator = presentedViewController.transitionCoordinator else {
-            chromeView.effect = UIBlurEffect(style: .light)
-            self.presentingViewController.view.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
+            if shouldBlur {
+                chromeView.effect = UIBlurEffect(style: .light)
+                self.presentingViewController.view.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
+            } else {
+                self.chromeView.backgroundColor = UIColor.separator.withAlphaComponent(0.5)
+            }
             return
         }
         
         coordinator.animate { (context) in
-            self.chromeView.effect = UIBlurEffect(style: .light)
-            self.presentingViewController.view.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
+            if self.shouldBlur {
+                self.chromeView.effect = UIBlurEffect(style: .light)
+                self.presentingViewController.view.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
+            } else {
+                self.chromeView.backgroundColor = UIColor.separator.withAlphaComponent(0.5)
+            }
         }
     }
     
     open override func dismissalTransitionWillBegin() {
         guard let coordinator = presentedViewController.transitionCoordinator else {
-            chromeView.effect = nil
-            self.presentingViewController.view.transform = .identity
+            if self.shouldBlur {
+                chromeView.effect = nil
+                self.presentingViewController.view.transform = .identity
+            } else {
+                self.chromeView.backgroundColor = .clear
+            }
             
             return
         }
         coordinator.animate { (context) in
-            self.chromeView.effect = nil
-            self.presentingViewController.view.transform = .identity
+            if self.shouldBlur {
+                self.chromeView.effect = nil
+                self.presentingViewController.view.transform = .identity
+            } else {
+                self.chromeView.backgroundColor = .clear
+            }
         }
     }
     
