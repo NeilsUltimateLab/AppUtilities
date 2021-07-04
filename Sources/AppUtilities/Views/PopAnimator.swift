@@ -19,6 +19,7 @@ public class PopAnimator: NSObject, UIViewControllerAnimatedTransitioning {
     public var width: CGFloat?
     public var topPadding: CGFloat = 100
     public var height: CGFloat?
+    public var shouldBlur: Bool = true
     private let impactFeedbackGenerator = UIImpactFeedbackGenerator()
     
     private lazy var shadowView: UIView = {
@@ -122,6 +123,7 @@ extension PopAnimator: UIViewControllerTransitioningDelegate {
     public func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
         let controller = PopPresentationController(presentedViewController: presented, presenting: presenting)
         controller.targetHeight = self.height
+        controller.shouldBlur = self.shouldBlur
         return controller
     }
 }
