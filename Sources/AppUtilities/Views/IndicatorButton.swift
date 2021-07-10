@@ -118,8 +118,10 @@ open class IndicatorButton: UIButton {
         self.isEnabled = true
         self.imageEdgeInsets = imageInset
         self.indicatorView.stopAnimating()
-        self.imageView?.image = previousImage
-        self.setImage(previousImage, for: [])
+        if let previousImage = previousImage {
+            self.imageView?.image = previousImage
+            self.setImage(previousImage, for: [])
+        }
         self.setTitle(previousText, for: .normal)
     }
     
