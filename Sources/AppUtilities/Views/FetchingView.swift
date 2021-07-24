@@ -30,6 +30,15 @@ public extension FetchingView {
                 return false
             }
         }
+        
+        public var error: AppErrorProvider? {
+            switch self {
+            case .error(let error):
+                return error
+            default:
+                return nil
+            }
+        }
     }
 }
 
