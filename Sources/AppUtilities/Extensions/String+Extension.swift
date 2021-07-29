@@ -39,3 +39,11 @@ public extension String {
     
     static let passwordPolicy = "The password must contain at least one (1) character from three (3) of the following categories:\nUppercase letter (A-Z) \nLowercase letter (a-z)\nDigit (0-9)."
 }
+
+public extension String {
+    var attributedHTMLString: NSAttributedString? {
+        guard let data = self.data(using: .utf8) else { return nil }
+        guard let attributedString = try? NSAttributedString(data: data, options: [.documentType: NSAttributedString.DocumentType.html], documentAttributes: nil) else {  return nil }
+        return attributedString
+    }
+}
