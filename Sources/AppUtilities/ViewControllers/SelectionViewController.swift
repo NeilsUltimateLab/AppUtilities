@@ -7,14 +7,14 @@
 
 import UIKit
 
-typealias SelectionProvider = Equatable & CustomStringConvertible
+public typealias SelectionProvider = Equatable & CustomStringConvertible
 
-class SelectionViewController<A: SelectionProvider>: UIViewController, UITableViewDataSource, UITableViewDelegate {
+public class SelectionViewController<A: SelectionProvider>: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     // MARK: - DataSources
-    var items: [A] = []
-    var selectedItems: [A]?
-    var allowsMultipleSelection: Bool {
+    public var items: [A] = []
+    public var selectedItems: [A]?
+    public var allowsMultipleSelection: Bool {
         set {
             self.tableView.allowsMultipleSelection = newValue
         }
@@ -22,22 +22,22 @@ class SelectionViewController<A: SelectionProvider>: UIViewController, UITableVi
             return self.tableView.allowsMultipleSelection
         }
     }
-    var shouldDismiss: Bool = false
+    public var shouldDismiss: Bool = false
     
-    var selectAllButton: UIBarButtonItem?
+    public var selectAllButton: UIBarButtonItem?
     
-    typealias SelectionHandler = (([A]) -> Void)
+    public typealias SelectionHandler = (([A]) -> Void)
     
     // MARK: - Selection Handler
     private var onSelection: SelectionHandler?
-    var tableView: UITableView = {
+    public var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
     
     // MARK: - Initialisers
-    init(items: [A], selectedItems: [A]? = nil, allowsMultipleSelection enabled: Bool, style: UITableView.Style = .plain, shouldDismiss: Bool = false, selectionHandler: SelectionHandler?) {
+    public init(items: [A], selectedItems: [A]? = nil, allowsMultipleSelection enabled: Bool, style: UITableView.Style = .plain, shouldDismiss: Bool = false, selectionHandler: SelectionHandler?) {
         self.items = items
         self.onSelection = selectionHandler
         self.selectedItems = selectedItems
@@ -48,12 +48,12 @@ class SelectionViewController<A: SelectionProvider>: UIViewController, UITableVi
         self.view.backgroundColor = .white
     }
     
-    required init?(coder aDecoder: NSCoder) {
+    required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
     
     // MARK: - Life-cycle Methods
-    override func viewDidLoad() {
+    override public func viewDidLoad() {
         super.viewDidLoad()
         
         setupTable()
@@ -92,7 +92,7 @@ class SelectionViewController<A: SelectionProvider>: UIViewController, UITableVi
         self.navigationItem.leftBarButtonItem = doneItem
     }
     
-    func setupForAlreadySelectedData() {
+    private func setupForAlreadySelectedData() {
         guard let alreadySelectedData = self.selectedItems else { return }
         let indexPaths = items.indices(from: alreadySelectedData).map({IndexPath(row: $0, section: 0)})
         for indexPath in indexPaths {
@@ -151,15 +151,15 @@ class SelectionViewController<A: SelectionProvider>: UIViewController, UITableVi
     }
     
     // MARK: - UITableViewDataSource Methods
-    func numberOfSections(in tableView: UITableView) -> Int {
+    public func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return items.count
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(SelectionTableCell.self, for: indexPath)!
         let data = items[indexPath.row]
         cell.textLabel?.text = data.description
@@ -168,14 +168,14 @@ class SelectionViewController<A: SelectionProvider>: UIViewController, UITableVi
     }
     
     // MARK: - UITableViewDelegate Methods
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if !self.allowsMultipleSelection {
             self.doneAction()
         }
         updateSelectAllButton()
     }
     
-    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+    public func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         updateSelectAllButton()
     }
     
@@ -200,7 +200,7 @@ class SelectionTableCell: UITableViewCell {
 }
 
 
-extension Array where Element: Equatable {
+public extension Array where Element: Equatable {
     
     mutating func delete(_ item: Element) {
         if let index = self.firstIndex(of: item) {
