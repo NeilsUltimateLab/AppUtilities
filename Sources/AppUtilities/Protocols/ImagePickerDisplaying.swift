@@ -19,7 +19,7 @@ public protocol ImagePickerPermissionRequesting {
 }
 
 public protocol ImagePickerDisplaying: ImagePickerPermissionRequesting {
-    func pickerAction(sourceType : UIImagePickerController.SourceType)
+    func pickerAction(sourceType : UIImagePickerController.SourceType, configure: ((UIImagePickerController)->Void)?)
     func alertForPermissionChange(forFeature feature: String, library: String, action: String)
 }
 
@@ -109,13 +109,13 @@ public extension ImagePickerPermissionRequesting where Self: UIViewController {
 
 public extension ImagePickerDisplaying where Self: UIViewController & UIImagePickerControllerDelegate & UINavigationControllerDelegate {
     
-    func showMediaPickerOptions() {
+    func showMediaPickerOptions(configure: ((UIImagePickerController)->Void)? = nil) {
         let fromCameraAction = UIAlertAction(title: "Capture photo from camera", style: .default) { (_) in
-            self.pickerAction(sourceType: .camera)
+            self.pickerAction(sourceType: .camera, configure: configure)
         }
         
         let fromPhotoLibraryAction = UIAlertAction(title: "Select from photo library", style: .default) { (_) in
-            self.pickerAction(sourceType: .photoLibrary)
+            self.pickerAction(sourceType: .photoLibrary, configure: configure)
         }
         
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
@@ -133,11 +133,12 @@ public extension ImagePickerDisplaying where Self: UIViewController & UIImagePic
         self.present(alert, animated: true, completion: nil)
     }
     
-    func pickerAction(sourceType : UIImagePickerController.SourceType) {
+    func pickerAction(sourceType : UIImagePickerController.SourceType, configure: ((UIImagePickerController)->Void)? = nil) {
         if UIImagePickerController.isSourceTypeAvailable(sourceType) {
             let picker = UIImagePickerController()
             picker.sourceType = sourceType
             picker.delegate = self
+            configure?(picker)
             if sourceType == .camera {
                 self.cameraAccessPermissionCheck(completion: { (success) in
                     if success {
