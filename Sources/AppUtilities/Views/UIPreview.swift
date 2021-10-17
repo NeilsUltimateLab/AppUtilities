@@ -8,7 +8,32 @@
 import UIKit
 
 #if canImport(SwiftUI) && DEBUG
+
 import SwiftUI
+
+/// Provides SwiftUI representation of UIViewController to be shown in Xcode Canvas Preview.
+///
+/// ## Usage:
+/// ```swift
+/// class ViewController: UIViewController {
+///     override func viewDidLoad() {
+///         super.viewDidLoad()
+///         ...
+///     }
+/// }
+///
+/// #if DEBUG
+/// import SwiftUI
+///
+/// struct ViewController_Preview: PreviewProvider {
+///     static var previews: some View {
+///         UIViewControllerPreview {
+///             ViewController()
+///         }
+///     }
+/// }
+/// #endif
+/// ```
 @available(iOS 13.0, *)
 public struct UIViewControllerPreview<ViewController: UIViewController>: UIViewControllerRepresentable {
     let viewController: ViewController
@@ -28,8 +53,29 @@ public struct UIViewControllerPreview<ViewController: UIViewController>: UIViewC
 }
 #endif
 
-#if canImport(SwiftUI) && DEBUG
+#if canImport(SwiftUI) && DEBUGç
 import SwiftUI
+
+/// Provides SwiftUI representation of UIView to be shown in Xcode Canvas Preview.
+///
+/// ## Usage:
+/// ```swift
+/// class AppTableViewCell: UITableViewCell {
+///     ...
+/// }
+///
+/// #if DEBUG
+/// import SwiftUI
+///
+/// struct AppTableViewCell_Preview: PreviewProvider {
+///     static var previews: some View {
+///         UIViewPreview {
+///             AppTableViewCell(frame: CGRect(x: 0, y: 0, width: 200, height: 44))
+///         }
+///     }
+/// }
+/// #endif
+/// ```
 public struct UIViewPreview<View: UIView>: UIViewRepresentable {
     let view: View
     

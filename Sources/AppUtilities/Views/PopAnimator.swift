@@ -7,6 +7,7 @@
 
 import UIKit
 
+/// This provides concrete class the zoom in animation for `UIViewController`.
 public class PopAnimator: NSObject, UIViewControllerAnimatedTransitioning {
     public var isPresenting: Bool = true
     

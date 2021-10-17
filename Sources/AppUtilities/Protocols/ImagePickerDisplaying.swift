@@ -12,12 +12,15 @@ import AVFoundation
 import Photos
 #endif
 
-
+/// Provides the default implemetation for `UIImagePickerController` presetation with permission check for `camera` and `photo library` options.
 public protocol ImagePickerPermissionRequesting {
     func cameraAccessPermissionCheck(completion: @escaping (Bool) -> Void)
     func photosAccessPermissionCheck(completion: @escaping (Bool)->Void)
 }
 
+/// Provides the default implemetation for `UIImagePickerController` presetation with `UIImagePickerController.SourceType` option.
+///
+/// This will show an alert with recovery steps in case of permission revoke.
 public protocol ImagePickerDisplaying: ImagePickerPermissionRequesting {
     func pickerAction(sourceType : UIImagePickerController.SourceType, configure: ((UIImagePickerController)->Void)?)
     func alertForPermissionChange(forFeature feature: String, library: String, action: String)

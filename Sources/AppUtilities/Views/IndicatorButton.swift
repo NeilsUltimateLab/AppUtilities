@@ -7,15 +7,24 @@
 
 import UIKit
 
+/// Shows the indicator view in button.
 open class IndicatorButton: UIButton {
     
+    /// Sets color of progress bar of ``MaskedProgressLabelView/progressTintColor``.
     open var progressTintColor: UIColor = .blue {
         didSet {
             self.progressView.progressTintColor = progressTintColor
         }
     }
     
+    /// A optional text to show when ``isAnimating``
     open var loadingText: String = ""
+    
+    /// A callback to indicate for animation start or stop.
+    ///
+    /// Called with `true` when ``startAnimating()`` and
+    /// `false` when ``stopAnimating()``.
+    public var onAnimating: ((Bool)->Void)?
     
     private var indicatingStackView: UIStackView = {
         let stackView = UIStackView()
@@ -34,6 +43,11 @@ open class IndicatorButton: UIButton {
         return label
     }()
     
+    /// Shows when ``startAnimating()`` and hides at ``stopAnimating()``.
+    ///
+    /// - Defaults :
+    ///     - style: `UIActivityIndicatorView.Style.medium`
+    ///     - `hidesWhenStopped = true`
     public var indicatorView: UIActivityIndicatorView = {
         let aiv = UIActivityIndicatorView(style: .medium)
         aiv.hidesWhenStopped = true
@@ -42,6 +56,13 @@ open class IndicatorButton: UIButton {
         return aiv
     }()
     
+    /// Sets a progress bar when invoked ``updateProgress(progress:)``.
+    ///
+    /// This does not allow user interaction.
+    ///
+    /// - Defaults :
+    ///     - ``MaskedProgressLabelView/textColor`` = `self.tintColor`
+    ///     - ``MaskedProgressLabelView/textAlignment`` = `.center`
     public lazy var progressView: MaskedProgressLabelView = {
         let progressView = MaskedProgressLabelView(frame: .zero)
         progressView.translatesAutoresizingMaskIntoConstraints = false
@@ -51,7 +72,10 @@ open class IndicatorButton: UIButton {
         return progressView
     }()
     
-    var isAnimating: Bool {
+    /// A flag to show if button is animating.
+    ///
+    /// this returns `true`/`false` when `UIActivityIndicatorView.isAnimating`.
+    public var isAnimating: Bool {
         return indicatorView.isAnimating
     }
     
@@ -89,6 +113,12 @@ open class IndicatorButton: UIButton {
         self.sendSubviewToBack(progressView)
     }
     
+    /// Sets the title (if not empty) and store it to restore title when ``stopAnimating()``.
+    ///
+    /// this function will return without an effect when ``isAnimating``.
+    /// - Parameters:
+    ///   - title: Optional title
+    ///   - state: UIControl state in which title to be shown.
     public override func setTitle(_ title: String?, for state: UIControl.State) {
         guard !isAnimating else { return }
         super.setTitle(title, for: state)
@@ -98,6 +128,11 @@ open class IndicatorButton: UIButton {
         self.previousText = title
     }
     
+    /// This hides title and image and shows ``indicatorView``.
+    ///
+    /// `isEnabled` sets to `false`.
+    ///
+    /// ``onAnimating`` is called with `true`.
     open func startAnimating() {
         self.previousImage = self.imageView?.image
         self.imageInset = self.imageEdgeInsets
@@ -112,8 +147,14 @@ open class IndicatorButton: UIButton {
         indicatorView.startAnimating()
         self.setImage(nil, for: [])
         self.isEnabled = false
+        self.onAnimating?(true)
     }
     
+    /// Hides the ``indicatorView`` and restores the previous title, image.
+    ///
+    /// `isEnabled` sets to `true`
+    ///
+    /// ``onAnimating`` is called with `false`.
     open func stopAnimating() {
         self.isEnabled = true
         self.imageEdgeInsets = imageInset
@@ -123,8 +164,14 @@ open class IndicatorButton: UIButton {
             self.setImage(previousImage, for: [])
         }
         self.setTitle(previousText, for: .normal)
+        self.onAnimating?(false)
     }
     
+    /// Sets the ``progressView`` mask.
+    /// - Parameter progress: progress in range of 0...1
+    ///
+    /// this sets the progress view with title `"Updating \(progress * 100)%"`
+    /// and clears the title when progress reaches to 1.
     open func updateProgress(progress: Double) {
         self.loadingLabel.text = ""
         

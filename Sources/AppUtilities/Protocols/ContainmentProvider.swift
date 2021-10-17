@@ -7,12 +7,43 @@
 
 import UIKit
 
-public protocol ContainmentProvider: class {
+/// Provides the default implementation for child view controller integration.
+///
+/// - Usage:
+/// ```swift
+/// class ViewController: UIViewController, ContainmentProvider {
+///
+///     private lazy var listViewController: UIViewController = { ... }()
+///
+///     private lazy var listContainerView: UIView = {
+///         let view = UIView(frame: CGRect(x: 100, y: 100, width: 200, height: 300)
+///         return view
+///     }()
+///
+///     private func configureFullScreenChild() {
+///         self.addChild(listViewController, to: self.view)
+///     }
+///
+///     private func configureInScreenChild() {
+///         self.addChild(listViewController, to: self.listContainerView)
+///     }
+///
+///     private func removeChild() {
+///         self.removeChild(listViewController)
+///     }
+/// }
+/// ```
+public protocol ContainmentProvider: AnyObject {
+    
+    /// Adds child view controller's content inside `containerView`.
     func addChild(_ viewController: UIViewController, to containerView: UIView)
+    
+    /// Removes the child view controller from parents with its content.
     func removeChild(_ viewController: UIViewController?)
 }
 
 public extension ContainmentProvider where Self: UIViewController {
+    
     func addChild(_ viewController: UIViewController, to containerView: UIView) {
         self.addChild(viewController)
         viewController.view.translatesAutoresizingMaskIntoConstraints = false
@@ -24,6 +55,7 @@ public extension ContainmentProvider where Self: UIViewController {
         viewController.didMove(toParent: self)
     }
     
+    /// Adds child view controller's content inside `containerView` respecting the safe area of `containerView`.
     func addChild(_ viewController: UIViewController, toSafeAreaOf containerView: UIView) {
         self.addChild(viewController)
         viewController.view.translatesAutoresizingMaskIntoConstraints = false

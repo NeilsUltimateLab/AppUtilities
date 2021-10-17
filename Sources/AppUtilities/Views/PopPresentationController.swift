@@ -7,6 +7,7 @@
 
 import UIKit
 
+/// UIPresentationController subclass to provide the background shadow or blur effect with card size layout of presented view controller.
 open class PopPresentationController: UIPresentationController {
     
     public var shouldBlur: Bool = true

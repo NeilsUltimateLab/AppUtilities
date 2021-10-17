@@ -7,6 +7,23 @@
 
 import UIKit
 
+/// A `UITextField` subclass to provide an instant text change callback.
+///
+///
+/// ```swift
+/// class AppTextFieldCell: UITableViewCell {
+///
+///     private lazy var textField: AppTextField = {
+///         let field = AppTextField(frame: .zero)
+///         field.translatesAutoresizingMaskIntoConstraints = false
+///         field.onTextChange = { [weak self] text in
+///             print(text)
+///         }
+///         return field
+///     }()
+///
+/// }
+/// ```
 open class AppTextField: UITextField {
     
     open var onTextChange: ((String?)->Void)?

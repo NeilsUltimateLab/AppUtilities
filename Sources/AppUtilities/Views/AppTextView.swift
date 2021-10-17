@@ -7,13 +7,45 @@
 
 import UIKit
 
+/// A `UITextView` subclass to provide an instant text change callback.
+///
+///
+/// ```swift
+/// class AppTextViewCell: UITableViewCell {
+///
+///     private lazy var textView: AppTextView = {
+///         let field = AppTextView(frame: .zero)
+///         field.translatesAutoresizingMaskIntoConstraints = false
+///         field.onTextChange = { [weak self] text in
+///             print(text)
+///         }
+///         return field
+///     }()
+///
+/// }
+/// ```
+
 open class AppTextView: UITextView, UITextViewDelegate {
     
+    /// Sets the limit for the numbers of characters.
+    ///
+    /// this parameter is considered when provided non-nil value.
     public var maxCharacters: Int?
     
+    /// A callback for the text change.
+    ///
+    /// This is called with latest value from `UITextView.textDidChangeNotification` notification.
     public var onTextChange: ((String?)->Void)?
+    
+    /// A callback for keyboard arrival.
     public var onBecomeFirstResponder: (()->Void)?
+    
+    /// A callback for keyboard dismissal.
     public var onResignFirstResponder: (()->Void)?
+    
+    /// Allows the return keyboard press action.
+    ///
+    /// Default is `false`
     public var shouldResignOnReturnKeypress: ()->Bool = { false }
     
     override init(frame: CGRect, textContainer: NSTextContainer?) {
@@ -34,7 +66,10 @@ open class AppTextView: UITextView, UITextViewDelegate {
         }
     }
     
+    
     @discardableResult
+    /// Calls ``onBecomeFirstResponder`` if super class allows.
+    /// - Returns: returns the value from super class.
     open override func becomeFirstResponder() -> Bool {
         let can = super.becomeFirstResponder()
         if can {
@@ -43,7 +78,10 @@ open class AppTextView: UITextView, UITextViewDelegate {
         return can
     }
     
+    
     @discardableResult
+    /// Calls ``onResignFirstResponder`` if super class allows.
+    /// - Returns: returns the value from super class.
     open override func resignFirstResponder() -> Bool {
         let can = super.resignFirstResponder()
         if can {
@@ -56,6 +94,12 @@ open class AppTextView: UITextView, UITextViewDelegate {
         return true
     }
     
+    /// Adjusts the text characters for return keyboard via ``shouldResignOnReturnKeypress`` and character limit via ``maxCharacters``.
+    /// - Parameters:
+    ///   - textView: textView instance
+    ///   - range: range of the replacement text
+    ///   - text: replacement text
+    /// - Returns: return `false` if `return` button from keyboard is pressed and ``shouldResignOnReturnKeypress`` allowed and if ``maxCharacters`` limit reached.
     public func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         guard (text as NSString).rangeOfCharacter(from: .newlines).location == NSNotFound, shouldResignOnReturnKeypress()
         else {

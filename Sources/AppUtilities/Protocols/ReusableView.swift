@@ -7,7 +7,10 @@
 
 import UIKit
 
-public protocol ReusableView: class {
+/// Provides a static identifier of a class.
+///
+/// This is explicitly conformed by `UITableViewCell`, `UITableViewHeaderFooterView`, `UICollectionReusableView` and `UIViewController`.
+public protocol ReusableView: AnyObject {
     static var identifier: String { get }
 }
 
@@ -22,7 +25,11 @@ extension UITableViewHeaderFooterView: ReusableView {}
 extension UICollectionReusableView : ReusableView {}
 extension UIViewController: ReusableView {}
 
-public protocol NibLoadableView: class {
+
+/// Provides a static `nibName` of a class.
+///
+/// This is explicitly conformed by `UIView`.
+public protocol NibLoadableView: AnyObject {
     static var nibName: String { get }
 }
 
@@ -31,6 +38,7 @@ public extension NibLoadableView where Self: UIView {
         return String(describing: self)
     }
     
+    /// trys to load the nib from `Bundle.main` using `NibLoadableView/nibName` property.
     static func initFromNib() -> Self? {
         guard let view = (Bundle.main.loadNibNamed(nibName, owner: self, options: nil) as? [Self])?.first else {
             return nil

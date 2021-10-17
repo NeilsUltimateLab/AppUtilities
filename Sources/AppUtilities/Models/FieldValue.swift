@@ -7,6 +7,7 @@
 
 import UIKit
 
+/// Provides a container for `UITextField`, `UITextView` or any `UIKeyInput` class configuration.
 public struct FieldValue: Hashable {
     public var title: String
     public var placeholder: String?

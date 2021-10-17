@@ -7,13 +7,25 @@
 
 import UIKit
 
+/// This is used to show the textual represetation of an item and compare while selecting.
 public typealias SelectionProvider = Equatable & CustomStringConvertible
 
+/// Provides an interface for presenting selection options of a list of content.
+///
+/// This takes the collection of ``SelectionProvider`` with optional collection of already selected items.
 public class SelectionViewController<A: SelectionProvider>: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     // MARK: - DataSources
+    
+    /// Collection of items for the list to provide selection.
     public var items: [A] = []
+    
+    /// Collection of already / previously selected items.
+    ///
+    /// for non-nil values, the tableView will show selection indicators to them and will scroll to first element.
     public var selectedItems: [A]?
+    
+    /// Allows ``tableView`` to have multiple selection.
     public var allowsMultipleSelection: Bool {
         set {
             self.tableView.allowsMultipleSelection = newValue
@@ -22,10 +34,13 @@ public class SelectionViewController<A: SelectionProvider>: UIViewController, UI
             return self.tableView.allowsMultipleSelection
         }
     }
+    
+    /// Allow to show `Cancel` button at the navigation bar.
     public var shouldDismiss: Bool = false
     
     public var selectAllButton: UIBarButtonItem?
     
+    /// A callback for the selected items.
     public typealias SelectionHandler = (([A]) -> Void)
     
     // MARK: - Selection Handler

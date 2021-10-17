@@ -8,11 +8,19 @@
 import UIKit
 
 public extension FetchingView {
+    
+    /// State to model 3 stage of Networking call.
     enum State {
+        /// this will enable the loading indicator ui with optional title and hide the `parentView` in ``FetchingView``.
         case fetching
+        
+        /// this will hide the loading indicator ui and show `parentView` in ``FetchingView``.
         case fetched
+        
+        /// this will hide the loading indicator ui and `parentView` and show the error ui from ``AppErrorProvider/image``, ``AppErrorProvider/title``, ``AppErrorProvider/message`` of ``AppErrorProvider``.
         case error(AppErrorProvider)
         
+        /// return `true` if current state is ``fetching``.
         public var isFetching: Bool {
             switch self {
             case .fetching:
@@ -21,7 +29,8 @@ public extension FetchingView {
                 return false
             }
         }
-        
+
+        /// return `true` if current state is ``error``.
         public var hasError: Bool {
             switch self {
             case .error:
@@ -31,6 +40,7 @@ public extension FetchingView {
             }
         }
         
+        /// returns the containing error object in ``error``.
         public var error: AppErrorProvider? {
             switch self {
             case .error(let error):
@@ -42,11 +52,38 @@ public extension FetchingView {
     }
 }
 
+/// A drop in view to show indicator ui covering its container view.
+///
+/// This can be used inside UIViewController when performing network call
+///```swift
+///class ViewController: UIViewController {
+///    private lazy var tableView: UITableView = { ... }()
+///
+///    private lazy var fetchingView: FetchingView = {
+///        FetchingView(listView: self.tableView, parentView: self.view)
+///    }()
+///
+///    private func fetchNotes() {
+///        self.fetchingView.fetchingState = .fetching
+///        self.provider.service.fetchNotes() { [weak self] result in
+///            switch result {
+///                case .success(let notes):
+///                    self?.fetchingView.fetchingState = .fetched
+///                case .error(let error):
+///                    self?.fetchingView.fetchingState = .error(error)
+///            }
+///        }
+///    }
+///}
+///```
 public class FetchingView {
     
     var listView: UIView
     var parentView: UIView
     
+    /// Y Offset to adjust the loading/error UI elements.
+    ///
+    /// This property can be used to accomodate keyboard integration.
     public var centerYOffset: CGFloat = 0 {
         didSet {
             centerYConstraint?.constant = centerYOffset
@@ -78,9 +115,9 @@ public class FetchingView {
         }
     }
     
-    /// When `fetchingState` changes this method will be called.
+    /// When ``fetchingState`` changes this method will be called.
     ///
-    /// - Parameter state: `fetchingState`
+    /// - Parameter state: ``fetchingState``
     private func validate(state: State) {
         self.listView.isHidden = true
         self.containerView.isHidden = false
@@ -182,7 +219,7 @@ public class FetchingView {
     }()
     
     
-    /// UIActivityIndicatorView will be rendered when `fetchingState` is `.fetching`
+    /// UIActivityIndicatorView will be rendered when ``fetchingState`` is `.fetching`.
     public var indicatorView: UIActivityIndicatorView = {
         let view = UIActivityIndicatorView(style: .medium)
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -193,6 +230,7 @@ public class FetchingView {
         return view
     }()
     
+    /// IndicatorView to show for pagination.
     public var loadMoreIndicatorView: UIActivityIndicatorView = {
         let view = UIActivityIndicatorView(style: .medium)
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -290,6 +328,9 @@ public class FetchingView {
     }
     
     // MARK: - LoadMoreView -
+    
+    /// A view for show in footer for pagination.
+    /// - Returns: return view containing ``loadMoreView()``.
     public func loadMoreView() -> UIView {
         let view = UIView(frame: CGRect(x: 0, y: 0, width: self.listView.frame.width, height: 56))
         view.addSubview(loadMoreIndicatorView)
@@ -299,6 +340,7 @@ public class FetchingView {
         return view
     }
     
+    /// Stops the ``loadMoreIndicatorView`` and remove from superview.
     public func stopLoadMore() {
         loadMoreIndicatorView.stopAnimating()
         loadMoreIndicatorView.removeFromSuperview()

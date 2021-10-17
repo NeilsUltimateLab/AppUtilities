@@ -7,6 +7,7 @@
 
 import UIKit
 
+/// A view to show progress bar with progress title.
 public class MaskedProgressLabelView: UIView {
         
     public var text: String = "" {

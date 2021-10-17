@@ -11,6 +11,18 @@ public protocol StoryboardIDProvider: RawRepresentable where Self.RawValue == St
     
 }
 
+/// Provides default implementation for initializing UIViewController from Storyboard.
+///
+/// - Requirement: ``StoryboardIDProvider``
+///
+/// - Usage:
+///```swift
+///enum Storyboard: String, StoryboardIDProvider {
+///     case main
+///}
+///
+///let vc = AppViewController.instantiate(from: Storyboard.main)
+///```
 public protocol StoryboardInstantiable {
     static var storyboardIdentifier: String { get }
     static func instantiate<S: StoryboardIDProvider>(from storyboard: S) -> Self

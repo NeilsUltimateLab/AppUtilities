@@ -7,6 +7,69 @@
 
 import UIKit
 
+/// A representation of `Cell` and its configuration `Value`.
+///
+/// `Cell` can be any ``ReusableView`` like `UITableViewCell`, `UICollectionViewCell`, `UITableViewHeaderFooterView`, `UICollectionReusableView` etc.
+///
+/// `Value` must conform to `Hashable` to use in `UICollectionViewDiffableDataSource` or `UITableViewDiffableDataSource`.
+///
+/// ## Usage:
+/// - Declaration:
+/// ```swift
+/// enum ProfileRowType {
+///     case image(Row<UIImage, ImageCell>)
+///     case label(Row<String, LabelCell>)
+///     case switch(Row<Bool, SwitchCell>)
+///     case textField(Row<FieldValue, TextFieldCell>
+/// }
+///
+///```
+///
+/// - Initialization:
+///```swift
+/// extension ProfileRowType {
+///     static func rows() -> [ProfileRowType] {
+///         [
+///             .image(Row(UIImage(named: "profile-art")!)),
+///             .label(Row("User name"))),
+///             .switch(Row(true))),
+///             .textField(Row(FieldValue(title: "Email", placeholder: "Enter email address", value: nil)))
+///         ]
+///     }
+/// }
+///```
+///
+/// - Usage:
+///```swift
+/// class ViewController: UIViewController {
+///     private lazy var dataSource: UICollectionViewDiffableDataSource<Section, ProfileRowType> = {
+///         UICollectionViewDiffableDataSource<Section, ProfileRowType>(collectionView: self.collectionView) { collectionView, indexPath, item in
+///             switch item {
+///             case .image(let row):
+///                 let cell = row.dequeueReusableCell(from: collectionView, at: indexPath)
+///                 cell.configure(with: row.value)
+///                 return cell
+///
+///             case .label(let row):
+///                 let cell = row.dequeueReusableCell(from: collectionView, at: indexPath)
+///                 cell.configure(with: row.value)
+///                 return cell
+///
+///             case .switch(let row):
+///                 let cell = row.dequeueReusableCell(from: collectionView, at: indexPath)
+///                 cell.configure(with: row.value)
+///                 return cell
+///
+///             case .textField(let row):
+///                 let cell = row.dequeueReusableCell(from: collectionView, at: indexPath)
+///                 cell.configure(with: row.value)
+///                 return cell
+///             }
+///         }
+///     }()
+/// }
+/// 
+/// ```
 public struct Row<Value, Cell: ReusableView>: Hashable where Value: Hashable {
     public var value: Value
     public var cellType: Cell.Type
