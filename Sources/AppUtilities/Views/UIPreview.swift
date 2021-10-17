@@ -53,7 +53,7 @@ public struct UIViewControllerPreview<ViewController: UIViewController>: UIViewC
 }
 #endif
 
-#if canImport(SwiftUI) && DEBUGç
+#if canImport(SwiftUI) && DEBUG
 import SwiftUI
 
 /// Provides SwiftUI representation of UIView to be shown in Xcode Canvas Preview.
