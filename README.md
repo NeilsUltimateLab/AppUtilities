@@ -4,7 +4,7 @@ Swift package with utility classes for iOS projects.
 
 This package packs the some useful
 - [Extensions](/Sources/AppUtilities/Extensions) over `Array`, `Data`, `String`, `Storyboard`, `UIView`, `UIViewController` types.
-- Provides the common data types like [FieldValue](/Sources/AppUtilities/Models/FieldValue.swift), [Row](/Source/AppUtilities/Models/Row.swift).
+- Provides the common data types like [FieldValue](/Sources/AppUtilities/Models/FieldValue.swift), [Row](/Sources/AppUtilities/Models/Row.swift).
 - Error handling interface like [AppErrorProvider](/Sources/AppUtilities/Protocols/AppErrorProvider.swift).
 - Child View Controller implementation via [ContainmentProvider](/Sources/AppUtilities/Protocols/ContainmentProvider.swift).
 - Image Picker Controller permissions via [ImagePickerDisplaying](/Sources/AppUtilities/Protocols/ImagePickerDisplaying.swift).
