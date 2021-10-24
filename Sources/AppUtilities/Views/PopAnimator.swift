@@ -7,7 +7,77 @@
 
 import UIKit
 
-/// This provides concrete class the zoom in animation for `UIViewController`.
+
+/**
+ This provides concrete class the zoom in animation for `UIViewController`.
+ 
+ ## Usage: -
+ 
+ ```swift
+class ViewController: UIViewController {
+    private var animator = PopAnimator()
+ 
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        ...
+    }
+    
+    private func presentInfo(_ sender: UIButton) {
+        let vc = ItemInfoVC()
+        
+        animator.sourceView = sender
+        animator.sourceRect = sender.superview?.convert(sender.frame, to: nil)
+        animator.shouldBlur = false
+        animator.canDismissFromOutside = true
+ 
+        let navVC = UINavigationController(rootViewController: vc)
+        navVC.transitioningDelegate = animator
+        navVC.modalPresentationStyle = .custom
+        self.present(navVC, animated: true)
+    }
+}
+ ```
+ 
+ While in presented view controller we can provide the preferredContentSize using autolayout.
+ 
+ ```swift
+ class ItemInfoVC: UIViewController {
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        ...
+    }
+ 
+    override var preferredContentSize: CGSize {
+        get {
+            let targetSize = CGSize(width: UIScreen.main.bounds.width - 50, height: UIView.layoutFittingCompressedSize.height)
+ 
+            var size = self.view.systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: .required, verticalFittingPriority: .defaultLow)
+ 
+            size.height += navigationController?.navigationBar.frame.height ?? 0
+            return size
+        }
+        set {
+            super.preferredContentSize = newValue
+        }
+    }
+ }
+ ```
+ 
+ If presented view controller is inside a container view controller like `UINavigationController`, then we should to ask the preferredContentSize from its visible child.
+ 
+ ```swift
+ class PopNavigationController: UINavigationController {
+     override var preferredContentSize: CGSize {
+        get {
+            self.topViewController?.preferredContentSize ?? .zero
+        }
+        set {
+            self.topViewController?.preferredContentSize = newValue
+        }
+     }
+ }
+ ```
+*/
 public class PopAnimator: NSObject, UIViewControllerAnimatedTransitioning {
     public var isPresenting: Bool = true
     
