@@ -4,6 +4,7 @@ import XCTest
 public func allTests() -> [XCTestCaseEntry] {
     return [
         testCase(AppConfigurationTests.allTests),
+        testCase(CGAffineTransformExtensionTests.allTests),
     ]
 }
 #endif

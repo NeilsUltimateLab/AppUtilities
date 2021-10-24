@@ -21,20 +21,8 @@ public class PopAnimator: NSObject, UIViewControllerAnimatedTransitioning {
     public var topPadding: CGFloat = 100
     public var height: CGFloat?
     public var shouldBlur: Bool = true
+    public var canDismissFromOutside: Bool = false
     private let impactFeedbackGenerator = UIImpactFeedbackGenerator()
-    
-    private lazy var shadowView: UIView = {
-        let view = UIView(frame: .zero)
-        view.backgroundColor = .systemBackground
-        view.layer.shadowColor = UIColor.darkGray.withAlphaComponent(1).cgColor
-        view.layer.shadowOpacity = 0
-        view.layer.shadowRadius = 24
-        view.layer.shadowOffset = .zero
-        view.layer.masksToBounds = false
-        view.layer.cornerRadius = 12
-        view.alpha = 0
-        return view
-    }()
     
     public override init() {
         super.init()
@@ -57,33 +45,49 @@ public class PopAnimator: NSObject, UIViewControllerAnimatedTransitioning {
         
         let containerView = transitionContext.containerView
         self.destinationRect = transitionContext.finalFrame(for: toView)
+        var toSnapView: UIView?
                 
         let isPresenting = self.isPresenting
 
-        containerView.addSubview(toVC)
+        if isPresenting {
+            containerView.addSubview(toVC)
+            toVC.frame = destinationRect
+            toVC.transform = CGAffineTransform(from: destinationRect, to: sourceRect)
+            toVC.layer.cornerRadius = 12
+            toVC.layer.masksToBounds = true
+        } else {
+            if let snapView = toVC.snapshotView(afterScreenUpdates: true) {
+                toSnapView = snapView
+                toVC.removeFromSuperview()
+                containerView.addSubview(snapView)
+                snapView.frame = destinationRect
+            }
+        }
+        
         containerView.addSubview(sourceView)
-        containerView.addSubview(shadowView)
         
         originalSourceView.alpha = 0
         sourceView.frame = sourceRect
-                
-        //toVC.frame = sourceRect
-        toVC.layer.cornerRadius = 12
-        toVC.layer.masksToBounds = true
+            
         toVC.alpha = isPresenting ? 0 : 1
-        shadowView.frame = toVC.frame
         
         if !isPresenting {
             containerView.bringSubviewToFront(sourceView)
             sourceView.alpha = 0
             sourceView.frame = destinationRect
-            //toVC.frame = sourceView.frame
+            toVC.frame = destinationRect
+            toVC.transform = .identity
         }
         impactFeedbackGenerator.impactOccurred()
                 
         UIView.animate(withDuration: duration, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.8, options: .curveEaseInOut) {
-            self.shadowView.layer.shadowOpacity = isPresenting ? 1 : 0
             
+            if isPresenting {
+                toVC.transform = .identity
+            } else {
+                toSnapView?.transform = CGAffineTransform(from: self.destinationRect, to: sourceRect)
+                toSnapView?.alpha = 0
+            }
             sourceView.frame = !isPresenting ? self.sourceRect : self.destinationRect
             toVC.alpha = isPresenting ? 1 : 0
             sourceView.alpha = isPresenting ? 0 : 1
@@ -125,14 +129,7 @@ extension PopAnimator: UIViewControllerTransitioningDelegate {
         let controller = PopPresentationController(presentedViewController: presented, presenting: presenting)
         controller.targetHeight = self.height
         controller.shouldBlur = self.shouldBlur
+        controller.canDismissFromOutside = self.canDismissFromOutside
         return controller
     }
 }
-
-extension CGRect {
-    var squared: CGRect {
-        let width = min(self.width, self.height)
-        return CGRect(origin: self.origin, size: CGSize(width: width, height: width))
-    }
-}
-

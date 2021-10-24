@@ -11,6 +11,7 @@ import UIKit
 open class PopPresentationController: UIPresentationController {
     
     public var shouldBlur: Bool = true
+    public var canDismissFromOutside: Bool = false
     private var keyboardWillAppearToken: Any?
     private var keyboardDidDisappearToken: Any?
     private var keyboardHeight: CGFloat = 0 {
@@ -19,6 +20,11 @@ open class PopPresentationController: UIPresentationController {
         }
     }
     public var targetHeight: CGFloat?
+    
+    private lazy var tapGesture: UITapGestureRecognizer = {
+        let gesture = UITapGestureRecognizer(target: self, action: #selector(tapAction))
+        return gesture
+    }()
     
     public override init(presentedViewController: UIViewController, presenting presentingViewController: UIViewController?) {
         super.init(presentedViewController: presentedViewController, presenting: presentingViewController)
@@ -38,6 +44,7 @@ open class PopPresentationController: UIPresentationController {
     private func setupChromeView() {
         guard let containerView = self.containerView else { return }
         containerView.addSubview(chromeView)
+        chromeView.addGestureRecognizer(tapGesture)
         
         chromeView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
         chromeView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
@@ -53,6 +60,12 @@ open class PopPresentationController: UIPresentationController {
         self.keyboardDidDisappearToken = NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillHideNotification, object: nil, queue: .main, using: { [weak self] (notification) in
             self?.keyboardHeight = 0
         })
+    }
+    
+    @objc private func tapAction() {
+        if canDismissFromOutside {
+            self.presentedViewController.dismiss(animated: true, completion: nil)
+        }
     }
     
     open override func presentationTransitionWillBegin() {
@@ -121,6 +134,10 @@ open class PopPresentationController: UIPresentationController {
         )
         
         var size = presentedView.systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: .required, verticalFittingPriority: .defaultLow)
+        
+        if size == .zero {
+            size = presentedViewController.preferredContentSize
+        }
         
         if size.height >= (containerView.frame.height - keyboardHeight) {
             size.height = containerView.frame.height - 0 - keyboardHeight
