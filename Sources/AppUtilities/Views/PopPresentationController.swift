@@ -135,7 +135,7 @@ open class PopPresentationController: UIPresentationController {
         
         var size = presentedView.systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: .required, verticalFittingPriority: .defaultLow)
         
-        if size == .zero {
+        if size.width == .zero || size.height == .zero {
             size = presentedViewController.preferredContentSize
         }
         
