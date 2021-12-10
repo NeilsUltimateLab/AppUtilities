@@ -114,7 +114,9 @@ public class PopAnimator: NSObject, UIViewControllerAnimatedTransitioning {
         else { return }
         
         let containerView = transitionContext.containerView
-        self.destinationRect = transitionContext.finalFrame(for: toView)
+        if self.destinationRect == nil {
+            self.destinationRect = transitionContext.finalFrame(for: toView)
+        }
         var toSnapView: UIView?
                 
         let isPresenting = self.isPresenting

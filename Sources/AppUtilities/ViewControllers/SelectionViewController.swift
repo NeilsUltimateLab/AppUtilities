@@ -13,7 +13,7 @@ public typealias SelectionProvider = Equatable & CustomStringConvertible
 /// Provides an interface for presenting selection options of a list of content.
 ///
 /// This takes the collection of ``SelectionProvider`` with optional collection of already selected items.
-public class SelectionViewController<A: SelectionProvider>: UIViewController, UITableViewDataSource, UITableViewDelegate {
+open class SelectionViewController<A: SelectionProvider>: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     // MARK: - DataSources
     
