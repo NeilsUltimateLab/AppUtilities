@@ -31,8 +31,8 @@ import UIKit
 ```
 */
 public class SheetAnimator: NSObject, UIViewControllerAnimatedTransitioning {
-    var startOrigin: CGPoint?
-    var endOrigin: CGPoint?
+    public var startOrigin: CGPoint?
+    public var endOrigin: CGPoint?
     
     public func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
         0.5
