@@ -12,7 +12,7 @@ public class SheetPresentationController: UIPresentationController {
     public var endOrigin: CGPoint?
     public var canDismissFromOutside: Bool = true
     
-    private lazy var chromeView: UIView = {
+    public lazy var chromeView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = .lightGray
