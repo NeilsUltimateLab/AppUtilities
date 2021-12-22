@@ -27,6 +27,8 @@ import UIKit
 open class AppTextField: UITextField {
     
     open var onTextChange: ((String?)->Void)?
+    open var onBecomeFirstResponder: (()->Void)?
+    open var onResignFirstResponder: (()->Void)?
     private var textDidChangeToken: Any?
     
     override init(frame: CGRect) {
@@ -48,6 +50,22 @@ open class AppTextField: UITextField {
     
     open override var canResignFirstResponder: Bool {
         return true
+    }
+    
+    open override func becomeFirstResponder() -> Bool {
+        let canBecome = super.becomeFirstResponder()
+        if canBecome {
+            self.onBecomeFirstResponder?()
+        }
+        return canBecome
+    }
+    
+    open override func resignFirstResponder() -> Bool {
+        let canResign = super.resignFirstResponder()
+        if canResign {
+            self.onResignFirstResponder?()
+        }
+        return canResign
     }
 
     deinit {
