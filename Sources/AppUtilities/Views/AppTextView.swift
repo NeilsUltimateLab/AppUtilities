@@ -48,7 +48,11 @@ open class AppTextView: UITextView, UITextViewDelegate {
     /// Default is `false`
     public var shouldResignOnReturnKeypress: ()->Bool = { false }
     
-    override init(frame: CGRect, textContainer: NSTextContainer?) {
+    public convenience init() {
+        self.init(frame: .zero, textContainer: nil)
+    }
+    
+    override public init(frame: CGRect, textContainer: NSTextContainer?) {
         super.init(frame: frame, textContainer: textContainer)
         observeTextChanges()
     }
