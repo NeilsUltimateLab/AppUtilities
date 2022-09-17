@@ -39,11 +39,11 @@ public class SheetPresentationController: UIPresentationController {
     public override func presentationTransitionWillBegin() {
         setupChromeView()
         guard let coordinator = presentedViewController.transitionCoordinator else {
-            chromeView.alpha = 0.5
+            chromeView.alpha = 1
             return
         }
         coordinator.animate { context in
-            self.chromeView.alpha = 0.5
+            self.chromeView.alpha = 1
         }
     }
     
